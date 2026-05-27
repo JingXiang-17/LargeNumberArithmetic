@@ -1,36 +1,22 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package com.mycompany.assignmentlargenumarithmetic;
 
-/**
- *
- * @author KOR JING XIANG
- */
-//Doubly Linked List
-public class Node <T> {
-    private T element;
+public class Node {
+
+    private int element;
     private Node prev;
     private Node next;
-    
-    public Node () {
-        this.element=null;
-        this.prev=null;
-        this.next=null;
-    }
-    
-    public Node (T element) {
-        this.element=element;
-        this.prev=null;
-        this.next=null;
+
+    public Node(int element) {
+        this.element = element;
+        this.prev = null;
+        this.next = null;
     }
 
-    public T getElement() {
+    public int getElement() {
         return element;
     }
 
-    public void setElement(T element) {
+    public void setElement(int element) {
         this.element = element;
     }
 
@@ -49,6 +35,4 @@ public class Node <T> {
     public void setNext(Node next) {
         this.next = next;
     }
-    
-    
 }
