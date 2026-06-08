@@ -1,5 +1,10 @@
 package com.mycompany.assignmentlargenumarithmetic;
 
+/**
+ * Main class
+ * A tester class to test all the arithmetic methods
+ */
+
 import java.util.Scanner;
 
 public class Main {
@@ -11,7 +16,7 @@ public class Main {
         LargeNumberManager list1;
         LargeNumberManager list2;
 
-        while (true) {
+        while (true) { //an infinite loop that recursively prompt user to enter numbers if invalid characters are entered
 
             list1 = new LargeNumberManager();
             list2 = new LargeNumberManager();
@@ -22,43 +27,45 @@ public class Main {
             System.out.println("n = ");
             String num2 = sc.next();
 
-            boolean valid = true;
+            boolean isValid = true; // boolean variable to flag invalid input
 
             // validate first number
-            for (int i = 0; i < num1.length(); i++) {
+            for (int i = 0; i < num1.length(); i++) { //a for loop that checks if every character entered as input is a digit
                 if (Character.isDigit(num1.charAt(i))) {
-                    list1.addLast(num1.charAt(i) - '0');
+                    list1.addLast(num1.charAt(i) - '0'); // digits are stored in a doubly linked list using ASCII value subtraction
                 } else {
-                    valid = false;
+                    isValid = false;
                     break;
                 }
             }
 
             // validate second number
-            if (valid) {
-                for (int i = 0; i < num2.length(); i++) {
+            if (isValid) { //if the first input is invalid, skip the verification for second input
+                for (int i = 0; i < num2.length(); i++) { //a for loop that checks if every character entered as input is a digit
                     if (Character.isDigit(num2.charAt(i))) {
-                        list2.addLast(num2.charAt(i) - '0');
+                        list2.addLast(num2.charAt(i) - '0'); // digits are stored in a doubly linked list using ASCII value subtraction
                     } else {
-                        valid = false;
+                        isValid = false;
                         break;
                     }
                 }
             }
 
-            if (!valid) {
+            if (!isValid) { //Recursively prompt user for invalid input entered
                 System.out.println("Invalid input! Please enter digits only.\n");
                 continue;
             }
 
-            break;
+            break; //the inputs are valid
         }
 
+        //clear leading zeros for both numbers first to get accurate list size, essential when comparing equality or larger
         list1.clearLeadingZeros();
         list2.clearLeadingZeros();
 
         System.out.println();
 
+        // perform arithmetic process (addition, subtraction, multiplication, division)
         LargeNumberManager addResult =
                 LargeNumberManager.addition(list1, list2);
         System.out.println("addition = " + addResult);
@@ -71,7 +78,7 @@ public class Main {
                 LargeNumberManager.multiplication(list1, list2);
         System.out.println("multiplication = " + mulResult);
 
-        try {
+        try { //use a try-catch block for division to handle division by 0
             String divResult =
                     LargeNumberManager.division(list1, list2);
             System.out.println("division = " + divResult);
