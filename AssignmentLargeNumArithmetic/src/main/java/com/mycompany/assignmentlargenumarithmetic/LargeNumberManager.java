@@ -184,6 +184,7 @@ public class LargeNumberManager {
 
         while (i != null || j != null || carry != 0) {
 
+            //check if the current pointer points to null, if true, treat as 0 to avoid NullPointerException
             int num1 = (i == null) ? 0 : i.getElement();
             int num2 = (j == null) ? 0 : j.getElement();
 
