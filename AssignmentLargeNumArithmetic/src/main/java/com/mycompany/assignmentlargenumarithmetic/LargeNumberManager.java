@@ -10,6 +10,7 @@ public class LargeNumberManager {
     private Node head;
     private Node tail;
     private int size;
+    private boolean isNegative = false; //a boolean variable to indicate if the large number is negative
 
     public LargeNumberManager() {
         head = null;
@@ -99,15 +100,60 @@ public class LargeNumberManager {
         return size;
     }
 
+    public void setNegative(boolean isNegative) {
+
+        // Method to set the sign of the large number
+        
+        this.isNegative = isNegative;
+    }
+
     // =========================
     // COMPARISON
     // =========================
+
+    public static boolean isLargerAbsolute(LargeNumberManager list1,
+                                        LargeNumberManager list2) {
+
+        // Method to compare the absolute values of two large numbers (doubly linked list)
+        // Useful for comparing two negative numbers
+
+        if (list1.size != list2.size) { //check the number of digits
+            return list1.size > list2.size;
+        }
+
+        Node i = list1.head;
+        Node j = list2.head;
+
+        while (i != null) {
+            
+            /*
+            If both doubly linked list have the same size
+            A while loop that traverse both doubly linked list from head is used
+            Return true if |list1| > |list2|, false otherwise
+            */
+
+            if (i.getElement() != j.getElement()) {
+                return i.getElement() > j.getElement();
+            }
+
+            i = i.getNext();
+            j = j.getNext();
+        }
+
+        return false; // equal case
+    }
 
     public static boolean isLarger(LargeNumberManager list1,
                                    LargeNumberManager list2) {
 
         if (list1.size != list2.size) { //check the number of digits
             return list1.size > list2.size;
+        }
+
+        if (list1.isNegative && !list2.isNegative) return false; //if list1 is negative and list2 is positive, list1 is smaller
+        if (!list1.isNegative && list2.isNegative) return true; //if list1 is positive and list2 is negative, list1 is larger
+        if (list1.isNegative && list2.isNegative) { //if both are negative, compare their absolute values
+            return isLargerAbsolute(list2, list1); //the larger absolute value is the smaller number when both are negative
         }
 
         Node i = list1.head;
@@ -140,6 +186,7 @@ public class LargeNumberManager {
         Useful for subtraction and division
         */
 
+        if (list1.isNegative != list2.isNegative) return false; //if one number is negative and the other is positive, they are not equal
         if (list1.size != list2.size) return false; //return false if number of digits are different
 
         Node i = list1.head;
@@ -173,7 +220,42 @@ public class LargeNumberManager {
         /*
         Using traversal from the tail and add both doubly linked list digit by digit
         Carry is propagated to the front to continue performing addition
+        For cases involving negative numbers, the addition method will call the subtraction method to perform the calculation
         */
+
+        //handle cases involving negative numbers first
+        if (list1.isNegative && !list2.isNegative) { //if list1 is negative and list2 is positive, perform subtraction list2 - |list1|
+            LargeNumberManager absList1 = new LargeNumberManager();
+            absList1.head = list1.head;
+            absList1.tail = list1.tail;
+            absList1.size = list1.size;
+            return subtraction(list2, absList1);
+        }
+
+        if (!list1.isNegative && list2.isNegative) { //if list1 is positive and list2 is negative, perform subtraction list1 - |list2|
+            LargeNumberManager absList2 = new LargeNumberManager();
+            absList2.head = list2.head;
+            absList2.tail = list2.tail;
+            absList2.size = list2.size;
+            return subtraction(list1, absList2);
+        }
+
+        if (list1.isNegative && list2.isNegative) { //if both list1 and list2 are negative, perform addition of their absolute values and mark the answer as negative
+            LargeNumberManager absList1 = new LargeNumberManager();
+            absList1.head = list1.head;
+            absList1.tail = list1.tail;
+            absList1.size = list1.size;
+
+            LargeNumberManager absList2 = new LargeNumberManager();
+            absList2.head = list2.head;
+            absList2.tail = list2.tail;
+            absList2.size = list2.size;
+
+            LargeNumberManager answer = addition(absList1, absList2);
+            answer.isNegative = true; //the sum of two negative numbers is negative
+            return answer;
+        }
+        //negative number cases handling ends
 
         LargeNumberManager answer = new LargeNumberManager();
 
@@ -211,6 +293,7 @@ public class LargeNumberManager {
         /*
         Using traversal from the tail to perform subtraction of large numbers (doubly linked list) digit by digit
         Borrow is propagated to the front (-1) to continue performing subtraction
+        For cases involving negative numbers, the subtraction method will call the addition method to perform the calculation
         */
 
         LargeNumberManager big;
@@ -218,12 +301,46 @@ public class LargeNumberManager {
 
         LargeNumberManager answer = new LargeNumberManager();
 
+        //handle cases involving negative numbers first
+        if (list1.isNegative && list2.isNegative) { //if both list1 and list2 are negative, perform subtraction of their absolute values and determine the sign of the answer based on subtraction rules
+            LargeNumberManager absList1 = new LargeNumberManager();
+            absList1.head = list1.head;
+            absList1.tail = list1.tail;
+            absList1.size = list1.size;
+
+            LargeNumberManager absList2 = new LargeNumberManager();
+            absList2.head = list2.head;
+            absList2.tail = list2.tail;
+            absList2.size = list2.size;
+
+            return subtraction(absList2, absList1); //the difference of two negative numbers is the difference of their absolute values but in reverse order
+        }
+
+        if (!list1.isNegative && list2.isNegative) { //if list1 is positive and list2 is negative, perform addition list1 + |list2|
+            LargeNumberManager absList2 = new LargeNumberManager();
+            absList2.head = list2.head;
+            absList2.tail = list2.tail;
+            absList2.size = list2.size;
+            return addition(list1, absList2);
+        }
+
+        if (list1.isNegative && !list2.isNegative) { //if list1 is negative and list2 is positive, perform addition |list1| + list2|
+            LargeNumberManager absList1 = new LargeNumberManager();
+            absList1.head = list1.head;
+            absList1.tail = list1.tail;
+            absList1.size = list1.size;
+            return addition(absList1, list2);
+        }
+        //handling of negative number cases ends
+
         if (isLarger(list1, list2) || isEqual(list1, list2)) { //determine the larger number between two doubly linked list
             big = list1;
             small = list2;
+            answer.isNegative = false; //the difference of a larger number and a smaller number is positive
         } else {
             big = list2;
             small = list1;
+            answer.isNegative = true; //the difference of a smaller number and a larger number is negative
         }
 
         if (isEqual(list1, list2)) { //for equal numbers, immediately return 0
@@ -270,6 +387,7 @@ public class LargeNumberManager {
         Each digit of the second number multiplies each digit of the first number
         Immediate results are shifted by appending zeros
         Partial results are added together using addition method
+        For negative numbers, the multiplication method will flag negative based on multiplication rules
         */
 
         LargeNumberManager finalAnswer = new LargeNumberManager();
@@ -310,6 +428,15 @@ public class LargeNumberManager {
         }
 
         finalAnswer.clearLeadingZeros();
+        if (list1.isNegative && list2.isNegative) {
+            finalAnswer.isNegative = false; //the product of two negative numbers is positive
+        }
+        else if (list1.isNegative || list2.isNegative) {
+            finalAnswer.isNegative = true; //the product of a negative number and a positive number is negative
+        }
+        else {
+            finalAnswer.isNegative = false; //the product of two positive numbers is positive
+        }
         return finalAnswer;
     }
 
@@ -317,77 +444,82 @@ public class LargeNumberManager {
     // DIVISION
     // =========================
 
-    public static String division(LargeNumberManager dividend,
-                                  LargeNumberManager divisor) {
-
-        /*
-        This method returns a String instead of a doubly linked list due to the decimal appending process
-        Using long division method by performing traversing from head
-        Repeatedly calls subtraction method to calculate the quotient digits
-        */
-
-        if (divisor.isEmpty()
-                || (divisor.size == 1 && divisor.head.getElement() == 0)) { //check if the divisor is 0
-            throw new ArithmeticException("Division by zero"); 
+    public static String division(LargeNumberManager dividend, LargeNumberManager divisor) {
+        // Handle Division by Zero
+        if (divisor.isEmpty() || (divisor.size == 1 && divisor.head.getElement() == 0)) {
+            throw new ArithmeticException("Division by zero");
         }
 
+        // Determine final sign
+        boolean isNegativeResult = (dividend.isNegative != divisor.isNegative);
+
+        // Create absolute copies to avoid modifying originals
+        LargeNumberManager absDividend = new LargeNumberManager();
+        copyNodes(dividend, absDividend);
+        
+        LargeNumberManager absDivisor = new LargeNumberManager();
+        copyNodes(divisor, absDivisor);
+
+        // Pre-check: If |dividend| < |divisor|, result is 0.something
         StringBuilder integerPart = new StringBuilder();
         LargeNumberManager remainder = new LargeNumberManager();
-
-        Node current = dividend.head;
-
-        while (current != null) { //digit by digit long division
-
+        
+        Node current = absDividend.head;
+        while (current != null) {
             remainder.addLast(current.getElement());
             remainder.clearLeadingZeros();
 
             int count = 0;
-
-            while (isLarger(remainder, divisor)
-                    || isEqual(remainder, divisor)) { //only perform division if remainder >= divisor, otherwise, append more digits to remainder
-
-                remainder = subtraction(remainder, divisor); 
+            while (isLarger(remainder, absDivisor) || isEqual(remainder, absDivisor)) {
+                remainder = subtraction(remainder, absDivisor);
                 remainder.clearLeadingZeros();
                 count++;
             }
-
-            integerPart.append(count); //count is the quotient digit
+            integerPart.append(count);
             current = current.getNext();
         }
 
-        while (integerPart.length() > 1 && integerPart.charAt(0) == '0') { //clear leading zeros
+        // Clean up leading zeros in integer part
+        while (integerPart.length() > 1 && integerPart.charAt(0) == '0') {
             integerPart.deleteCharAt(0);
         }
 
-        if (remainder.size == 1 && remainder.head.getElement() == 0) { //if there is no remainder, the divisor divides the dividend completely
-            return integerPart.toString(); 
-        }
-
-        StringBuilder decimal = new StringBuilder(); //there is decimals in the quotient
-
-        for (int d = 0; d < 20; d++) { //maximum number of decimals = 20
-
-            remainder.addLast(0);
-            remainder.clearLeadingZeros();
-
-            int count = 0;
-
-            while (isLarger(remainder, divisor)
-                    || isEqual(remainder, divisor)) {
-
-                remainder = subtraction(remainder, divisor);
+        // Handle Decimal Part
+        StringBuilder decimal = new StringBuilder();
+        if (!(remainder.size == 1 && remainder.head.getElement() == 0)) {
+            for (int d = 0; d < 20; d++) {
+                remainder.addLast(0);
                 remainder.clearLeadingZeros();
-                count++;
-            }
 
-            decimal.append(count);
-
-            if (remainder.size == 1 && remainder.head.getElement() == 0) { //check if the division has no remainder
-                break;
+                int count = 0;
+                while (isLarger(remainder, absDivisor) || isEqual(remainder, absDivisor)) {
+                    remainder = subtraction(remainder, absDivisor);
+                    remainder.clearLeadingZeros();
+                    count++;
+                }
+                decimal.append(count);
+                if (remainder.size == 1 && remainder.head.getElement() == 0) break;
             }
         }
 
-        return integerPart + "." + decimal; // the returned String format will be `INTEGER`.`DECIMAL`
+        // Assemble Result
+        String finalResult = integerPart.toString();
+        if (decimal.length() > 0) {
+            finalResult += "." + decimal.toString();
+        }
+        
+        return isNegativeResult ? "-" + finalResult : finalResult;
+    }
+
+    /**
+     * Helper to deep-copy nodes from one manager to another
+     */
+    private static void copyNodes(LargeNumberManager source, LargeNumberManager target) {
+        Node current = source.head;
+        while (current != null) {
+            target.addLast(current.getElement());
+            current = current.getNext();
+        }
     }
 
     // =========================
@@ -401,11 +533,15 @@ public class LargeNumberManager {
         Using StringBuilder because StringBuilder object is mutable, which is suitable to append the object digit by digit
         Traversing from head and append the StringBuilder object digit by digit to copy all digits
         StringBuilder object is finally converted to String
+        For negative numbers, a negative sign is appended at the front of the StringBuilder object
         */
 
         if (head == null) return "0"; //empty list is assumed as 0
 
         StringBuilder sb = new StringBuilder();
+        if (isNegative) {
+            sb.append("-");
+        }
 
         Node current = head;
 

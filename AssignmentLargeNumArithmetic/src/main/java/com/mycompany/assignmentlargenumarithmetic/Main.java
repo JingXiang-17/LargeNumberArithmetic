@@ -31,6 +31,10 @@ public class Main {
 
             // validate first number
             for (int i = 0; i < num1.length(); i++) { //a for loop that checks if every character entered as input is a digit
+                if (i == 0 && num1.charAt(i) == '-') { // check for negative sign at the beginning of the number
+                    list1.setNegative(true); // set the sign of the large number to negative
+                    continue;
+                }
                 if (Character.isDigit(num1.charAt(i))) {
                     list1.addLast(num1.charAt(i) - '0'); // digits are stored in a doubly linked list using ASCII value subtraction
                 } else {
@@ -42,6 +46,10 @@ public class Main {
             // validate second number
             if (isValid) { //if the first input is invalid, skip the verification for second input
                 for (int i = 0; i < num2.length(); i++) { //a for loop that checks if every character entered as input is a digit
+                    if (i == 0 && num2.charAt(i) == '-') { // check for negative sign at the beginning of the number
+                        list2.setNegative(true); // set the sign of the large number to negative
+                        continue;
+                    }
                     if (Character.isDigit(num2.charAt(i))) {
                         list2.addLast(num2.charAt(i) - '0'); // digits are stored in a doubly linked list using ASCII value subtraction
                     } else {
