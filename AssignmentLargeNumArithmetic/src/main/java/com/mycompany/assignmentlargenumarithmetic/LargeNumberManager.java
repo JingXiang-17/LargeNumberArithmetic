@@ -391,6 +391,13 @@ public class LargeNumberManager {
         For negative numbers, the multiplication method will flag negative based on multiplication rules
         */
 
+        if (list1.isEmpty() || list2.isEmpty() || (list1.size == 1 && list1.head.getElement() == 0) || 
+            (list2.size == 1 && list2.head.getElement() == 0)) {
+            LargeNumberManager zeroResult = new LargeNumberManager();
+            zeroResult.addFirst(0);
+            return zeroResult; //if either number is 0, the product is 0
+        }
+
         LargeNumberManager finalAnswer = new LargeNumberManager();
         finalAnswer.addFirst(0);
 
@@ -541,7 +548,7 @@ public class LargeNumberManager {
         if (head == null) return "0"; //empty list is assumed as 0
 
         StringBuilder sb = new StringBuilder();
-        if (isNegative) {
+        if (isNegative && !(size == 1 && head.getElement() == 0)) { //append negative sign at the front if the number is negative, but not for 0
             sb.append("-");
         }
 
