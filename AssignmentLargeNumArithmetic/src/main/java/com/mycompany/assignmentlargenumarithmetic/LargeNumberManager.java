@@ -295,10 +295,6 @@ public class LargeNumberManager {
         Borrow is propagated to the front (-1) to continue performing subtraction
         For cases involving negative numbers, the subtraction method will call the addition method to perform the calculation
         */
-
-        LargeNumberManager big;
-        LargeNumberManager small;
-
         LargeNumberManager answer = new LargeNumberManager();
 
         //handle cases involving negative numbers first
@@ -329,9 +325,14 @@ public class LargeNumberManager {
             absList1.head = list1.head;
             absList1.tail = list1.tail;
             absList1.size = list1.size;
-            return addition(absList1, list2);
+            answer = addition (absList1, list2);
+            answer.setNegative(true);
+            return answer;
         }
         //handling of negative number cases ends
+        
+        LargeNumberManager big;
+        LargeNumberManager small;
 
         if (isLarger(list1, list2) || isEqual(list1, list2)) { //determine the larger number between two doubly linked list
             big = list1;

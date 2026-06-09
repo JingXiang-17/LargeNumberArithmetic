@@ -76,15 +76,15 @@ public class Main {
         // perform arithmetic process (addition, subtraction, multiplication, division)
         LargeNumberManager addResult =
                 LargeNumberManager.addition(list1, list2);
-        System.out.println("addition = " + addResult);
+        System.out.println("addition = " + addResult.toString());
 
         LargeNumberManager subResult =
                 LargeNumberManager.subtraction(list1, list2);
-        System.out.println("subtraction = " + subResult);
+        System.out.println("subtraction = " + subResult.toString());
 
         LargeNumberManager mulResult =
                 LargeNumberManager.multiplication(list1, list2);
-        System.out.println("multiplication = " + mulResult);
+        System.out.println("multiplication = " + mulResult.toString());
 
         try { //use a try-catch block for division to handle division by 0
             String divResult =
